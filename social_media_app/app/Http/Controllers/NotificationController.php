@@ -8,13 +8,13 @@ class NotificationController extends Controller
 {
     public function index()
     {
-        $notifications = Auth::user()->notifications()->get();
+        $notifications = Auth::user()->notifications::get();
         return view('notifications', compact('notifications'));
     }
 
     public function markAsRead($notificationId)
     {
-        $notification = Auth::user()->notifications()->findOrFail($notificationId);
+        $notification = Auth::user()->notifications::findOrFail($notificationId);
         $notification->markAsRead();
 
         return redirect()->back()->with('message', 'Notification marked as read!');
@@ -29,7 +29,7 @@ class NotificationController extends Controller
 
     public function destroy($notificationId)
     {
-        $notification = Auth::user()->notifications()->findOrFail($notificationId);
+        $notification = Auth::user()->notifications::findOrFail($notificationId);
         
         // Ensure the notification is marked as read before deletion
         if ($notification->read_at) {
