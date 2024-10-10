@@ -1,35 +1,45 @@
 HOW TO RUN LARAVEL (social_media_app)
 
-1. Download the code from https://github.com/IamGotu/4072-ITE313-LABORATORY-EXERCISE-2
+Download the code from https://github.com/IamGotu/4072-ITE313-LABORATORY-EXERCISE-5
 
-2. If xampp is not installed download it here https://www.apachefriends.org/index.html and install it
+If xampp is not installed download it here https://www.apachefriends.org/index.html and install it (skipped if already downloaded/installed)
 
-3. Open the xampp and start the module Apache and MySQL
+Open the xampp and start the module Apache and MySQL
 
-4. If MySQL module is not starting, open Task Manager
+If MySQL module is not starting, open Task Manager
 
-5. End task mysqld, then start the MySQL module again
+End task mysqld, then start the MySQL module again
 
-7. Install NodeJS here: https://nodejs.org/en
+Install NodeJS here: https://nodejs.org/en
 
-8. In the terminal located in folder social_media_app type "npm install" to have node module
+In the terminal located in folder social_media_app type "npm install" to have node module
 
-9. In the terminal located in folder social_media_app type "composer install" to have vendor
+Enable the zip extension in PHP. Go to xampp find Config(aligned to the module Apache) press it to open PHP (ini.php). Then change ;extension=zip to extension=zip
 
-10. In the terminal located in folder social_media_app type "npm install pusher-js"
+Navigate to your project folder: example, C:\xampp\htdocs\4072-ITE313-LABORATORY-EXERCISE-5\social_media_app.
 
-11. Inside folder social_media_app find the file ".env.example" and change it to ".env"
+Right-click the folder and choose Properties.
 
-12. In the terminal located in folder social_media_app type "php artisan migrate" to migrate the database
+Go to the "Security" tab and ensure that your user account has the appropriate permissions (read, write, modify).
 
-13. In the terminal located in folder social_media_app type "npm run dev"
+If necessary, edit the permissions to allow full control for your user account.
 
-14. In the terminal located in folder social_media_app type "php artisan serve"
+Click Edit, select your user, and check Full Control. Click Apply and then OK to save the changes.
 
-15. If it says no application encryption key has been specified.
+In the terminal located in folder social_media_app type "composer install" to have vendor
 
-16. In the terminal located in folder social_media_app type "php artisan key:generate"
+Inside folder social_media_app find the file ".env.example" and change it to ".env"
 
-17. Then try again in the terminal located in folder social_media_app the "php artisan serve"
+In the terminal located in folder social_media_app type "php artisan migrate" to migrate the database
 
-18. Open the running server or Ctrl+click the following link
+In the terminal located in folder social_media_app type "npm run dev"
+
+In the terminal located in folder social_media_app type "php artisan serve"
+
+If it says no application encryption key has been specified
+
+In the terminal located in folder social_media_app type "php artisan key:generate"
+
+Then try again in the terminal located in folder social_media_app the "php artisan serve"
+
+Open the running server or Ctrl+click the following link
