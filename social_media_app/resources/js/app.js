@@ -1,6 +1,7 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
 import angular from 'angular';
+import Pusher from 'pusher-js';
 
 window.Alpine = Alpine;
 
@@ -118,6 +119,22 @@ angular.module('socialApp', [])
     // Fetch suggested friends on load
     $scope.getSuggestedFriends();
 });
+
+window.Pusher = Pusher;
+
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: process.env.MIX_PUSHER_APP_KEY,
+    cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+    forceTLS: true
+});
+
+// Listen for new messages
+window.Echo.private('chat.' + userId) // userId should be the ID of the logged-in user
+    .listen('NewMessage', (event) => {
+        console.log('New message received:', event.message);
+        // Handle the new message (update the UI, etc.)
+    });
 
 // CSRF Token configuration
 angular.module('socialApp').config(function($httpProvider) {
