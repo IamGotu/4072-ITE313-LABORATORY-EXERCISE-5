@@ -1,14 +1,20 @@
 <?php
 
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
-// Public routes
+// Redirect root URL to /login
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/login');
+});
+
+// Define the login route
+Route::get('/login', function () {
+    return view('auth.login');
 });
 
 // Dashboard route with authentication
@@ -43,6 +49,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/friends/cancel/{friendId}', [FriendController::class, 'cancelFriendRequest'])->name('friends.cancel');
     Route::post('/friends/unfriend/{friendId}', [FriendController::class, 'unfriend'])->name('friends.unfriend');
     Route::post('/friends/confirm/{requestId}', [FriendController::class, 'confirm'])->name('friends.confirm');
+
+    
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('messages', [MessageController::class, 'index'])->name('messages.index');
+    Route::get('messages/conversation/{userId}', [MessageController::class, 'getConversation'])->name('messages.conversation');
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages');
+    Route::post('messages/send', [MessageController::class, 'send'])->name('messages.send');
+    Route::delete('/messages/{id}/delete', [MessageController::class, 'deleteMessage']);
+    Route::post('/messages/conversation/{id}/read', [MessageController::class, 'markAsRead'])->name('messages.markAsRead');
+    Route::get('messages/retrieve/{userId}', [MessageController::class, 'retrieve'])->name('messages.retrieve');
+    Route::get('search', [MessageController::class, 'search'])->name('messages.search');
 });
 
 // Optional: API routes if needed
