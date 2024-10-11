@@ -28,6 +28,8 @@ Click Edit, select your user, and check Full Control. Click Apply and then OK to
 
 In the terminal located in folder social_media_app type "composer install" to have vendor
 
+In the terminal located in folder social_media_app type "composer require pusher/pusher-php-server" and npm install --save laravel-echo pusher-js
+
 Inside folder social_media_app find the file ".env.example" and change it to ".env"
 
 In the terminal located in folder social_media_app type "php artisan migrate" to migrate the database
