@@ -8,23 +8,32 @@ class User extends Controller
 {
     public function register()
     {
-        return view('register'); //register is file name in App\View\register.php
+        return view('register'); // register is file name in App\View\register.php
     }
 
-    //store data in database from post form
+    // Store data in the database from the post form
     public function store()
     {
-        $userModel = new UserModel(); //call user model
-        //get data from post form
+        $userModel = new UserModel(); // Call user model
+        // Get data from post form
         $username = $this->request->getPost('username');
         $email = $this->request->getPost('email');
         $password = $this->request->getPost('password');
 
-        //store them in data array to save by model
+        // Check for duplicate email and username
+        if ($userModel->is_email_exist($email)) {
+            return redirect()->to('/register')->with('error', 'Email already exists.');
+        }
+
+        if ($userModel->is_username_exist($username)) {
+            return redirect()->to('/register')->with('error', 'Username already exists.');
+        }
+
+        // Store them in data array to save by model
         $data = [
             'username' => $username,
             'email' => $email,
-            'password' => password_hash((string)$password,PASSWORD_DEFAULT) //hashed password for security
+            'password' => password_hash((string)$password, PASSWORD_DEFAULT) // Hashed password for security
         ];
 
         $userModel->save($data);
@@ -32,16 +41,15 @@ class User extends Controller
         return redirect()->to('/login'); 
     }
 
-    //login iu
+    // Login view
     public function login()
     {
         return view('login');
     }
 
-    //verify login
+    // Verify login
     public function verifylogin()
     {
-
         // Call model
         $userModel = new UserModel();
 
@@ -74,12 +82,12 @@ class User extends Controller
         }
     }
 
-    //logout function
+    // Logout function
     public function logout()
     {
-        //destroy all session
+        // Destroy all session
         session()->destroy();
-        //redirect to login page
+        // Redirect to login page
         return redirect()->to('/login');
     }
 
@@ -122,6 +130,15 @@ class User extends Controller
         if (!empty($newPassword)) {
             // Hash the new password before saving it
             $data['password'] = password_hash($newPassword, PASSWORD_DEFAULT);
+        }
+
+        // Check for duplicate email and username, excluding the current user
+        if ($userModel->is_email_exist($data['email'], $userId)) {
+            return redirect()->to('/profile')->with('error', 'Email already exists.');
+        }
+
+        if ($userModel->is_username_exist($data['username'], $userId)) {
+            return redirect()->to('/profile')->with('error', 'Username already exists.');
         }
 
         // Update the user's data in the database
