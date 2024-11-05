@@ -16,12 +16,12 @@
     <div class="container" ng-controller="LoginController">
         <h2>Login</h2>
         <form ng-submit="login()">
+            <div class="message" ng-if="errorMessage">{{ errorMessage }}</div>
             <label>Email:</label>
             <input type="email" ng-model="email" required>
             <label>Password:</label>
             <input type="password" ng-model="password" required>
             <button type="submit">Login</button>
-            <p>{{ errorMessage }}</p>
         </form>
         <div>
             <a href="register.html">Don't have an account?</a>

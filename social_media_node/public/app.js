@@ -1,5 +1,6 @@
 var app = angular.module('socialMediaApp', []);
 
+// Login Controller
 app.controller('LoginController', ['$scope', '$http', '$window', function($scope, $http, $window) {
     $scope.login = function() {
         $http.post('/auth/login', {
@@ -32,6 +33,7 @@ app.controller('LoginController', ['$scope', '$http', '$window', function($scope
     };
 }]);
 
+// Registration Controller
 app.controller('RegisterController', ['$scope', '$http', function($scope, $http) {
     $scope.register = function() {
         $http.post('/auth/register', {
@@ -57,6 +59,73 @@ app.controller('RegisterController', ['$scope', '$http', function($scope, $http)
                 console.error('Registration request error:', error);
                 $scope.registerMessage = 'An unexpected error occurred during registration. Please try again.';
             }
+        });
+    };
+}]);
+
+// Profile Controller
+app.controller('ProfileController', ['$scope', '$http', '$window', function($scope, $http, $window) {
+    // Initialize the user object and other variables
+    $scope.user = {};
+    $scope.showEditForm = false;
+    $scope.errorMessage = '';
+    $scope.successMessage = '';
+    $scope.passwordMismatch = false;
+
+    // Fetch user profile data
+    $http.get('/profile').then(function(response) {
+        if (response.data.success) {
+            $scope.user = response.data.user;
+        } else {
+            $scope.errorMessage = response.data.message || 'Error fetching profile data.';
+        }
+    }).catch(function(error) {
+        console.error('Profile request error:', error);
+        $scope.errorMessage = 'An error occurred while fetching profile data.';
+    });
+
+    // Update profile function
+    $scope.updateProfile = function() {
+        // Ensure new password matches confirmation
+        if ($scope.newPassword !== $scope.confirmPassword) {
+            $scope.passwordMismatch = true;
+            return;
+        }
+    
+        // Proceed with submitting the form data
+        var formData = new FormData();
+        formData.append('name', $scope.user.name);
+        formData.append('email', $scope.user.email);
+        if ($scope.newPassword) {
+            formData.append('currentPassword', $scope.currentPassword);
+            formData.append('newPassword', $scope.newPassword);
+        }
+    
+        $http.post('/profile/update', { name: $scope.user.name, email: $scope.user.email, currentPassword: $scope.currentPassword, newPassword: $scope.newPassword }).then(function(response) {
+        }).then(function(response) {
+            if (response.data.success) {
+                $scope.user = response.data.user;
+                $scope.successMessage = 'Profile updated successfully!';
+            } else {
+                $scope.errorMessage = response.data.message;
+            }
+        }).catch(function(error) {
+            console.error('Update profile request error:', error);
+            $scope.errorMessage = 'An error occurred while updating profile data.';
+        });
+    };    
+
+    // Function to handle logout
+    $scope.logout = function() {
+        $http.post('/auth/logout').then(function(response) {
+            if (response.data.success) {
+                $window.location.href = 'index.html'; // Redirect to login page
+            } else {
+                $scope.errorMessage = response.data.message;
+            }
+        }).catch(function(error) {
+            console.error('Logout request error:', error);
+            $scope.errorMessage = 'An error occurred during logout.';
         });
     };
 }]);
