@@ -92,8 +92,6 @@ HOW TO RUN NODE.JS/ANGULAR.JS (social_media_node)
 
 7. Right click the folder social_media_node then Open in Integrated Terminal
 
-8. In the terminal type "npm install -g http-server"
-
-9. After navigate to the public folder inside social_media_node and the terminal type "http-server ."
+8. In the terminal type "node server.js"
 
 7. Ctrl+click the following link
