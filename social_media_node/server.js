@@ -52,6 +52,10 @@ app.get('/', checkLoggedIn, (req, res) => {
 });
 
 app.get('/user', (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ message: 'User is not logged in.' });
+    }
+
     // Assuming you're retrieving the user from a database
     const query = 'SELECT first_name, middle_name, last_name, username, suffix FROM users WHERE id = ?';
     db.query(query, [req.session.user.id], (err, results) => {
@@ -109,7 +113,12 @@ app.post('/login', (req, res) => {
             const user = results[0];
             bcrypt.compare(password, user.password, (err, result) => {
                 if (result) {
-                    req.session.user = { id: user.id, username: user.username, first_name: user.first_name, last_name: user.last_name };
+                    req.session.user = { 
+                        id: user.id, 
+                        username: user.username, 
+                        first_name: user.first_name, 
+                        last_name: user.last_name 
+                    };
                     return res.status(200).json({ message: 'Login successful!' });
                 } else {
                     return res.status(401).json({ message: 'Invalid username or password.' });
@@ -120,6 +129,52 @@ app.post('/login', (req, res) => {
         }
     });
 });
+
+// Update profile route
+app.post('/update-profile', (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ message: 'User is not logged in.' });
+    }
+
+    const { username, first_name, middle_name, last_name, suffix, password } = req.body;
+    const userId = req.session.user.id;
+
+    if (!userId) {
+        return res.status(400).json({ message: 'User ID is missing' });
+    }
+
+    const updates = { username, first_name, middle_name, last_name, suffix };
+
+    if (password) {
+        bcrypt.hash(password, 10, (err, hashedPassword) => {
+            if (err) {
+                return res.status(500).json({ message: 'Error hashing password.' });
+            }
+            updates.password = hashedPassword;
+            performUpdate(res, updates, userId);  // Call the performUpdate function
+        });
+    } else {
+        performUpdate(res, updates, userId);  // Call the performUpdate function
+    }
+});
+
+function performUpdate(res, updates, userId) {
+    const query = 'UPDATE users SET ? WHERE id = ?';
+    db.query(query, [updates, userId], (err, result) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error updating profile.' });
+        }
+
+        db.query('SELECT * FROM users WHERE id = ?', [userId], (err, results) => {
+            if (err || results.length === 0) {
+                return res.status(500).json({ message: 'Error fetching updated user data.' });
+            }
+
+            const updatedUser = results[0];
+            res.status(200).json({ message: 'Profile updated successfully!', user: updatedUser });
+        });
+    });
+}
 
 // Logout route
 app.get('/logout', (req, res) => {

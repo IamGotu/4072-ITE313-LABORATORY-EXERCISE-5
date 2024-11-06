@@ -9,6 +9,10 @@
 
     <div ng-if="user">
         <h1>Hello, {{ user.first_name }} {{ user.middle_name }} {{ user.last_name }} {{ user.suffix }} ({{ user.username }}), Welcome to Social Media App!</h1>
+        
+        <!-- Add a button to go to profile page -->
+        <button ng-click="goToProfile()">Go to Profile</button>
+        
         <button ng-click="logout()">Logout</button>
     </div>
     
@@ -38,6 +42,11 @@
                     }, function(error) {
                         console.error('Logout failed:', error);
                     });
+            };
+
+            // Navigate to the profile page
+            $scope.goToProfile = function() {
+                $window.location.href = '/profile.html';
             };
         });
     </script>
