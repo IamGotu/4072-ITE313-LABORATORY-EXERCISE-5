@@ -73,6 +73,7 @@ HOW TO RUN CODEIGNITER (codeigniter)
 
 12. Copy/paste this to the browser: http://localhost/codeigniter/public/
 
+
 HOW TO RUN NODE.JS/ANGULAR.JS (social_media_node)
 
 1. Download the code from https://github.com/IamGotu/4072-ITE313-LABORATORY-EXERCISE-2
@@ -91,6 +92,8 @@ HOW TO RUN NODE.JS/ANGULAR.JS (social_media_node)
 
 7. Right click the folder social_media_node then Open in Integrated Terminal
 
-8. In the terminal type "node server.js"
+8. In the terminal type "npm install -g http-server"
 
-7. Copy/paste or run this to the browser: http://localhost:3000/
+9. After navigate to the public folder inside social_media_node and the terminal type "http-server ."
+
+7. Ctrl+click the following link
