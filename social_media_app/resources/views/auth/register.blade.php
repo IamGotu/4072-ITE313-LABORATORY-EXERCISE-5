@@ -1,52 +1,158 @@
 <x-guest-layout>
+    <!-- Page Heading -->
+    <h2 class="text-center text-2xl font-bold mt-4 mb-6">
+        {{ __('Create an Account') }}
+    </h2>
+
+    <!-- Session Status -->
+    <x-auth-session-status class="mb-4" :status="session('status')" />
+
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+        <!-- Name Fields -->
+        <div class="flex space-x-4">
+            <div class="w-1/3">
+                <x-text-input id="first_name" class="block mt-1 w-full" type="text" name="first_name" :value="old('first_name')" required autofocus placeholder="{{ __('First Name') }}" />
+                <x-input-error :messages="$errors->get('first_name')" class="mt-2" />
+            </div>
+
+            <div class="w-1/3">
+                <x-text-input id="middle_name" class="block mt-1 w-full" type="text" name="middle_name" :value="old('middle_name')" placeholder="{{ __('Middle Name (Optional)') }}" />
+                <x-input-error :messages="$errors->get('middle_name')" class="mt-2" />
+            </div>
+
+            <div class="w-1/3">
+                <x-text-input id="last_name" class="block mt-1 w-full" type="text" name="last_name" :value="old('last_name')" required placeholder="{{ __('Last Name') }}" />
+                <x-input-error :messages="$errors->get('last_name')" class="mt-2" />
+            </div>
+        </div>
+
+        <!-- Suffix Field (Optional) -->
+        <div class="mt-4">
+            <x-text-input id="suffix" class="block mt-1 w-full" type="text" name="suffix" :value="old('suffix')" placeholder="{{ __('Suffix (Optional)') }}" />
+            <x-input-error :messages="$errors->get('suffix')" class="mt-2" />
+        </div>
+
+        <!-- Birthdate Fields -->
+        <div class="flex space-x-4 mt-4">
+            <!-- Month Dropdown -->
+            <div class="w-1/3">
+                <x-input-label for="birth_month" :value="__('Month')" />
+                <select id="birth_month" name="birth_month" class="block mt-1 w-full p-2 border border-gray-300 rounded-md" required>
+                    <option value="">{{ __('Select Month') }}</option>
+                    @foreach (range(1, 12) as $month)
+                        <option value="{{ $month }}" {{ old('birth_month') == $month ? 'selected' : '' }}>
+                            {{ date('F', mktime(0, 0, 0, $month, 10)) }}
+                        </option>
+                    @endforeach
+                </select>
+                <x-input-error :messages="$errors->get('birth_month')" class="mt-2" />
+            </div>
+
+            <!-- Day Dropdown -->
+            <div class="w-1/3">
+                <x-input-label for="birth_day" :value="__('Day')" />
+                <select id="birth_day" name="birth_day" class="block mt-1 w-full p-2 border border-gray-300 rounded-md" required>
+                    <option value="">{{ __('Select Day') }}</option>
+                    @foreach (range(1, 31) as $day)
+                        <option value="{{ $day }}" {{ old('birth_day') == $day ? 'selected' : '' }}>{{ $day }}</option>
+                    @endforeach
+                </select>
+                <x-input-error :messages="$errors->get('birth_day')" class="mt-2" />
+            </div>
+
+            <!-- Year Dropdown -->
+            <div class="w-1/3">
+                <x-input-label for="birth_year" :value="__('Year')" />
+                <select id="birth_year" name="birth_year" class="block mt-1 w-full p-2 border border-gray-300 rounded-md" required>
+                    <option value="">{{ __('Select Year') }}</option>
+                    @foreach (range(now()->year, 1900, -1) as $year)
+                        <option value="{{ $year }}" {{ old('birth_year') == $year ? 'selected' : '' }}>{{ $year }}</option>
+                    @endforeach
+                </select>
+                <x-input-error :messages="$errors->get('birth_year')" class="mt-2" />
+            </div>
+        </div>
+
+        <!-- Gender Dropdown -->
+        <div class="mt-4">
+            <x-input-label for="gender" :value="__('Gender')" />
+            <select id="gender" name="gender" class="block mt-1 w-full p-2 border border-gray-300 rounded-md" required>
+                <option value="female" {{ old('gender') == 'female' ? 'selected' : '' }}>{{ __('Female') }}</option>
+                <option value="male" {{ old('gender') == 'male' ? 'selected' : '' }}>{{ __('Male') }}</option>
+                <option value="custom" {{ old('gender') == 'custom' ? 'selected' : '' }}>{{ __('Custom') }}</option>
+            </select>
+
+            <!-- Pronouns Dropdown (shown when "Custom" is selected) -->
+            <div class="mt-2" id="custom-pronouns" style="display: none;">
+                <x-input-label for="pronouns" :value="__('Pronouns')" />
+                <select id="pronouns" name="pronouns" class="block mt-1 w-full p-2 border border-gray-300 rounded-md">
+                    <option value="she/her" {{ old('pronouns') == 'she/her' ? 'selected' : '' }}>{{ __('She/Her') }}</option>
+                    <option value="he/his" {{ old('pronouns') == 'he/his' ? 'selected' : '' }}>{{ __('He/His') }}</option>
+                    <option value="they/them" {{ old('pronouns') == 'they/them' ? 'selected' : '' }}>{{ __('They/Them') }}</option>
+                </select>
+            </div>
+
+            <x-input-error :messages="$errors->get('gender')" class="mt-2" />
         </div>
 
         <!-- Email Address -->
         <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
+            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" placeholder="{{ __('Email') }}" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
         <!-- Password -->
         <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
+            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="new-password" placeholder="{{ __('Password') }}" />
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
         <!-- Confirm Password -->
         <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
+            <x-text-input id="password_confirmation" class="block mt-1 w-full" type="password" name="password_confirmation" required autocomplete="new-password" placeholder="{{ __('Confirm Password') }}" />
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
+        <!-- Terms and Conditions -->
+        <div class="mt-4 text-sm">
+            <p>
+                {{ __('People who use our service may have uploaded your contact information.') }}
+            </p>
+            <br>
+            <p>
+                {{ __('By clicking Sign Up, you agree to our') }} 
+                <a href="#" class="text-blue-500">{{ __('Terms') }}</a>, 
+                <a href="#" class="text-blue-500">{{ __('Privacy Policy') }}</a> 
+                {{ __('and') }} 
+                <a href="#" class="text-blue-500">{{ __('Cookies Policy') }}</a>. 
+            </p>
+        </div>
 
-            <x-primary-button class="ms-4">
+        <!-- Register Button -->
+        <div class="mt-4">
+            <x-primary-button class="block w-full h-12 text-center flex items-center justify-center text-sm font-semibold">
                 {{ __('Register') }}
             </x-primary-button>
         </div>
+
+        <!-- Login Link -->
+        <div class="flex items-center justify-center mt-4 space-x-4">
+            <a class="text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
+                {{ __('Already registered?') }}
+            </a>
+        </div>
     </form>
+
+    <script>
+        // Show custom pronouns field only when gender is custom
+        document.getElementById('gender').addEventListener('change', function () {
+            if (this.value === 'custom') {
+                document.getElementById('custom-pronouns').style.display = 'block';
+            } else {
+                document.getElementById('custom-pronouns').style.display = 'none';
+            }
+        });
+    </script>
 </x-guest-layout>
