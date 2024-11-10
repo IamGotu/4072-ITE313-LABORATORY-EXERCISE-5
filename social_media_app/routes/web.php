@@ -2,9 +2,17 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
-    return view('welcome');
+    // Check if the user is authenticated
+    if (Auth::check()) {
+        // Redirect to the dashboard if the user is logged in
+        return redirect()->route('dashboard');
+    } else {
+        // Redirect to the login page if the user is not logged in
+        return redirect()->route('login');
+    }
 });
 
 Route::get('/dashboard', function () {
