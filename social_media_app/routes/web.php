@@ -20,8 +20,16 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    // Route for displaying the profile page
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    
+    // Route for updating profile information (name, birthdate, etc.)
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    
+    // Route for updating email address
+    Route::patch('/profile/email', [ProfileController::class, 'updateEmail'])->name('profile.email.update');
+    
+    // Route for deleting the user's account
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 

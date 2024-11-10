@@ -27,7 +27,6 @@ class User extends Authenticatable
         'gender',
         'pronouns',
         'birth_date',
-        'profile_picture',
     ];
 
     /**

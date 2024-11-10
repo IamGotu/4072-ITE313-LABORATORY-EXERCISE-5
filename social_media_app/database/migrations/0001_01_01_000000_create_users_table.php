@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('password');
             $table->string('gender');
             $table->string('pronouns')->nullable();
-            $table->string('profile_picture')->default('default-avatar.jpg');
             $table->timestamp('birth_date')->nullable();
             $table->rememberToken();
             $table->timestamps();
