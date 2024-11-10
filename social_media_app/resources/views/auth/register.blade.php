@@ -148,10 +148,14 @@
     <script>
         // Show custom pronouns field only when gender is custom
         document.getElementById('gender').addEventListener('change', function () {
+            const pronounsField = document.getElementById('pronouns');
+            const customPronouns = document.getElementById('custom-pronouns');
+
             if (this.value === 'custom') {
-                document.getElementById('custom-pronouns').style.display = 'block';
+                customPronouns.style.display = 'block';
             } else {
-                document.getElementById('custom-pronouns').style.display = 'none';
+                customPronouns.style.display = 'none';
+                pronounsField.value = ''; // Set pronouns to null if not custom
             }
         });
     </script>
