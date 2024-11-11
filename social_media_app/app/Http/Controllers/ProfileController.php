@@ -7,13 +7,13 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    // Show the profile edit page
+    /**
+     * Display the user's profile form.
+     */
     public function edit(Request $request): View
     {
         return view('profile.edit', [
@@ -21,53 +21,37 @@ class ProfileController extends Controller
         ]);
     }
 
-    // Update the user's profile information (name, etc.)
-    public function update(Request $request)
+    /**
+     * Update the user's email address.
+     */
+    public function updateEmail(ProfileUpdateRequest $request): RedirectResponse
     {
-        // Validate the input
-        $request->validate([
-            'first_name' => 'required|string|max:255',
-            'middle_name' => 'nullable|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'suffix' => 'nullable|string|max:255',
-            'birth_month' => 'required|integer|min:1|max:12',
-            'birth_day' => 'required|integer|min:1|max:31',
-            'birth_year' => 'required|integer|min:1900|max:'.date('Y'),
-            'gender' => 'required|string|in:female,male,custom',
-            'pronouns' => 'nullable|string|in:she/her,he/his,they/them',
-        ]);
-    
-        // Update the user profile
-        $user = auth()->user();
-        $user->update([
-            'first_name' => $request->input('first_name'),
-            'middle_name' => $request->input('middle_name'),
-            'last_name' => $request->input('last_name'),
-            'suffix' => $request->input('suffix'),
-            'birth_date' => Carbon::createFromDate($request->input('birth_year'), $request->input('birth_month'), $request->input('birth_day'))->format('Y-m-d'),
-            'gender' => $request->input('gender'),
-            'pronouns' => ($request->input('gender') === 'custom') ? $request->input('pronouns') : null,
-        ]);
-    
-        // Redirect back or to another page
-        return redirect()->route('profile.edit');
+        $user = $request->user();
+        $user->email = $request->email;
+
+        // If email changes, set email_verified_at to null
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
+
+        return Redirect::route('profile.edit')->with('status', 'email-updated');
     }
-    
-    // Update the user's email address
-    public function updateEmail(Request $request)
+
+    /**
+     * Update the user's profile informations.
+     */
+    public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->validate([
-            'email' => 'required|email|unique:users,email,' . Auth::id(),
-        ]);
+        $user = $request->user();
+        $user->name = $request->name;
 
-        $user = Auth::user();
-        $user->update([
-            'email' => $request->email,
-        ]);
+        $user->save();
 
-        return redirect()->route('profile.edit')->with('status', 'email-updated');
+        return Redirect::route('profile.edit')->with('status', 'name-updated');
     }
-    
+
     /**
      * Delete the user's account.
      */
