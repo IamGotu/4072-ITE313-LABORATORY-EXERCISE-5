@@ -9,24 +9,17 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
-    
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'first_name',
-        'middle_name',
-        'last_name',
-        'suffix',
+        'name',
         'email',
         'password',
-        'gender',
-        'pronouns',
-        'birth_date',
     ];
 
     /**
@@ -49,7 +42,47 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'birth_date' => 'date',
         ];
+    }
+
+    public function friends()
+    {
+        return $this->belongsToMany(User::class, 'friend_user', 'user_id', 'friend_id')
+                    ->withPivot('status') // Include the pivot status
+                    ->withTimestamps();
+    }
+
+    // Method to get the friend requests received
+    public function friendRequestsReceived()
+    {
+        return $this->belongsToMany(User::class, 'friend_user', 'friend_id', 'user_id')
+                    ->withPivot('status')
+                    ->wherePivot('status', 'pending')
+                    ->withTimestamps();
+    }
+
+    // Method to get the friend requests sent
+    public function friendRequestsSent()
+    {
+        return $this->belongsToMany(User::class, 'friend_user', 'user_id', 'friend_id')
+                    ->withPivot('status')
+                    ->wherePivot('status', 'pending')
+                    ->withTimestamps();
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    // In User.php
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
     }
 }
